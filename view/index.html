@@ -22,6 +22,7 @@
 	}
 
 	websocket.onopen = function(evt) {
+	    console.log("web socket open")
 		term = new Terminal({
 			screenKeys: true,
 			useStyle: true,
@@ -51,11 +52,13 @@
 		}
 
 		websocket.onclose = function(evt) {
+            console.log("web socket close")
 			term.write("Session terminated");
 			term.destroy();
 		}
 
 		websocket.onerror = function(evt) {
+            console.log("web socket err")
 			if (typeof console.log == "function") {
 				console.log(evt)
 			}

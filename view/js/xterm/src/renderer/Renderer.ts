@@ -14,7 +14,7 @@ import { EventEmitter } from '../EventEmitter';
 import { RenderDebouncer } from '../ui/RenderDebouncer';
 import { ScreenDprMonitor } from '../ui/ScreenDprMonitor';
 import { ITheme } from 'xterm';
-import { CharacterJoinerRegistry } from '../renderer/CharacterJoinerRegistry';
+import { CharacterJoinerRegistry } from './CharacterJoinerRegistry';
 
 export class Renderer extends EventEmitter implements IRenderer {
   private _renderDebouncer: RenderDebouncer;

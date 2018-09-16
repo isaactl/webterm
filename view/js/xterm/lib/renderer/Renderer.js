@@ -18,7 +18,7 @@ var LinkRenderLayer_1 = require("./LinkRenderLayer");
 var EventEmitter_1 = require("../EventEmitter");
 var RenderDebouncer_1 = require("../ui/RenderDebouncer");
 var ScreenDprMonitor_1 = require("../ui/ScreenDprMonitor");
-var CharacterJoinerRegistry_1 = require("../renderer/CharacterJoinerRegistry");
+var CharacterJoinerRegistry_1 = require("./CharacterJoinerRegistry");
 var Renderer = (function (_super) {
     __extends(Renderer, _super);
     function Renderer(_terminal, theme) {
