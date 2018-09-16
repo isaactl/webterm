@@ -1,0 +1,79 @@
+hash: f1ba5817696930f224d2c56e1133ea897fd6b7f4423be01c9feb636fb7a382c3
+updated: 2018-09-16T17:09:44.055732+08:00
+imports:
+- name: github.com/docker/distribution
+  version: b089e91688254eb5aef187f188c8ee0ebe4e4675
+  subpackages:
+  - digestset
+  - reference
+- name: github.com/docker/docker
+  version: ed392603acbf7849aa68d760c67d9c645ac035d8
+  subpackages:
+  - api
+  - api/types
+  - api/types/blkiodev
+  - api/types/container
+  - api/types/events
+  - api/types/filters
+  - api/types/image
+  - api/types/mount
+  - api/types/network
+  - api/types/registry
+  - api/types/strslice
+  - api/types/swarm
+  - api/types/swarm/runtime
+  - api/types/time
+  - api/types/versions
+  - api/types/volume
+  - client
+  - errdefs
+- name: github.com/docker/go-connections
+  version: 97c2040d34dfae1d1b1275fa3a78dbdd2f41cf7e
+  subpackages:
+  - nat
+  - sockets
+  - tlsconfig
+- name: github.com/docker/go-units
+  version: 47565b4f722fb6ceae66b95f853feed578a4a51c
+- name: github.com/gogo/protobuf
+  version: e14cafb6a2c249986e51c4b65c3206bf18578715
+  subpackages:
+  - proto
+- name: github.com/gorilla/mux
+  version: 9e1f5955c0d22b55d9e20d6faa28589f83b2faca
+- name: github.com/gorilla/websocket
+  version: 66b9c49e59c6c48f0ffce28c2d8b8a5678502c6d
+- name: github.com/konsorten/go-windows-terminal-sequences
+  version: b729f2633dfe35f4d1d8a32385f6685610ce1cb5
+- name: github.com/kr/pty
+  version: db8e3cd836b82e82e0a9c8edc6896967dd31374f
+- name: github.com/Microsoft/go-winio
+  version: 97e4973ce50b2ff5f09635a57e2b88a037aae829
+- name: github.com/opencontainers/go-digest
+  version: c9281466c8b2f606084ac71339773efd177436e7
+- name: github.com/opencontainers/image-spec
+  version: e562b04403929d582d449ae5386ff79dd7961a11
+  subpackages:
+  - specs-go
+  - specs-go/v1
+- name: github.com/pkg/errors
+  version: c059e472caf75dbe73903f6521a20abac245b17f
+- name: github.com/sirupsen/logrus
+  version: d23a0f20d429b5da960216daca3b37e075cbdcd1
+- name: golang.org/x/crypto
+  version: 0e37d006457bf46f9e6692014ba72ef82c33022c
+  subpackages:
+  - ssh/terminal
+- name: golang.org/x/net
+  version: 26e67e76b6c3f6ce91f7c52def5af501b4e0f3a2
+  subpackages:
+  - context
+  - context/ctxhttp
+  - internal/socks
+  - proxy
+- name: golang.org/x/sys
+  version: d0be0721c37eeb5299f245a996a483160fc36940
+  subpackages:
+  - unix
+  - windows
+testImports: []
