@@ -53,6 +53,7 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 		client.Disconnect()
 		conn.Close()
 	}()
+	client.Resize(uint(100), uint(100))
 
 	go func() {
 		for {
@@ -112,7 +113,7 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 			log.WithField("resizeMessage", resizeMessage).Info("Resizing terminal")
-
+			client.Resize(uint(resizeMessage.Cols), uint(resizeMessage.Rows))
 		default:
 			l.WithField("dataType", dataTypeBuf[0]).Error("Unknown data type")
 		}

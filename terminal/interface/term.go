@@ -7,4 +7,5 @@ type Terminal interface {
 	Disconnect() error
 	Read([]byte) (int, error)
 	Run(conn *websocket.Conn, cmd []byte) ([]byte, error)
+	Resize(col, row uint) error
 }

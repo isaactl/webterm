@@ -68,21 +68,27 @@ func (dc *DockerClient) Run(conn *websocket.Conn, cmd []byte) ([]byte, error) {
 	ctx := context.Background()
 	exec, err := dc.cli.ContainerExecCreate(ctx, dc.containerID, types.ExecConfig{
 		Privileged:   false,
-		Tty:          false,
-		AttachStdin:  false,
-		AttachStderr: false,
-		AttachStdout: false,
-		Detach:       true,
-		DetachKeys:   "ctrl-p,ctrl-q",
+		Tty:          true,
+		AttachStdin:  true,
+		AttachStderr: true,
+		AttachStdout: true,
 		Cmd:          cmdArray,
 	})
 	if err != nil {
 		return nil, err
 	}
 
+	/*	err = dc.cli.ContainerExecResize(ctx, exec.ID, types.ResizeOptions{
+			Height: 100,
+			Width:  100,
+		})
+		if err != nil {
+			return nil, err
+		}*/
+
 	containerConn, err := dc.cli.ContainerExecAttach(ctx, exec.ID, types.ExecStartCheck{
-		Detach: true,
-		Tty:    false,
+		Detach: false,
+		Tty:    true,
 	})
 	if err != nil {
 		return nil, err
@@ -117,6 +123,13 @@ func (dc *DockerClient) Read(msg []byte) (int, error) {
 	copy(msg, []byte(r))
 	time.Sleep(1 * time.Second)
 	return len(r), nil
+}
+
+func (dc *DockerClient) Resize(col, row uint) error {
+	return dc.cli.ContainerResize(context.Background(), dc.containerID, types.ResizeOptions{
+		Height: row,
+		Width:  col,
+	})
 }
 
 func (dc *DockerClient) prepareContainer() error {
