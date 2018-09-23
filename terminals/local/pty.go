@@ -1,6 +1,7 @@
 package local
 
 import (
+	"context"
 	"os"
 	"os/exec"
 	"syscall"
@@ -19,26 +20,27 @@ type PtyClient struct {
 	cmd *exec.Cmd
 	tty *os.File
 	// cmdBuff         bytes.Buffer
-	SyncMessageFunc func([]byte)
-	stopChan        chan bool
+	SyncMessageFunc terminals.SyncFunc
 }
 
-func NewPtyClinet(config terminals.TermConfigs, messageFunc func([]byte)) (_interface.Terminal, error) {
+func NewPtyClient(config terminals.TermConfigs) (_interface.Terminal, error) {
 	return &PtyClient{
-		SyncMessageFunc: messageFunc,
-		stopChan:        make(chan bool, 1),
 		//cmdBuff:         bytes.Buffer{},
 	}, nil
 }
 
-func (client *PtyClient) Connect() error {
-	client.SyncMessageFunc([]byte("lunch console\n"))
+func (client *PtyClient) SetSync(syncFunc terminals.SyncFunc) {
+	client.SyncMessageFunc = syncFunc
+}
+
+func (client *PtyClient) Connect(ctx context.Context) error {
+	client.SyncMessageFunc([]byte("lunch console\n"), false)
 	client.cmd = exec.Command("/bin/bash", "-l")
 	client.cmd.Env = append(os.Environ(), "TERM=xterm")
 
 	tty, err := pty.Start(client.cmd)
 	if err != nil {
-		client.SyncMessageFunc([]byte(err.Error()))
+		client.SyncMessageFunc([]byte(err.Error()), true)
 		return err
 	}
 	client.tty = tty
@@ -48,15 +50,15 @@ func (client *PtyClient) Connect() error {
 		buf := make([]byte, 1024)
 		for {
 			select {
-			case <-client.stopChan:
+			case <-ctx.Done():
 				return
 			default:
 				read, err := client.Read(buf)
 				if err != nil {
-					client.SyncMessageFunc([]byte(err.Error()))
+					client.SyncMessageFunc([]byte(err.Error()), true)
 					return
 				}
-				client.SyncMessageFunc(buf[:read])
+				client.SyncMessageFunc(buf[:read], false)
 			}
 		}
 	}()
@@ -64,7 +66,6 @@ func (client *PtyClient) Connect() error {
 }
 
 func (client *PtyClient) Disconnect() error {
-	client.stopChan <- true
 	if client.cmd != nil {
 		client.cmd.Process.Kill()
 		client.cmd.Process.Wait()
@@ -85,13 +86,13 @@ func (client *PtyClient) Read(buf []byte) (int, error) {
 	return bytesRead, nil
 }
 
-func (client *PtyClient) Run(cmd []byte) error {
+func (client *PtyClient) Run(cmd []byte) (int, error) {
 	//fmt.Println(string(cmd))
 	_, err := client.tty.Write(cmd)
 	if err != nil {
-		client.SyncMessageFunc([]byte(err.Error()))
+		client.SyncMessageFunc([]byte(err.Error()), true)
 	}
-	return nil
+	return len(cmd), nil
 }
 
 func (client *PtyClient) Resize(resizeMessage terminals.WindowSize) error {
@@ -103,7 +104,7 @@ func (client *PtyClient) Resize(resizeMessage terminals.WindowSize) error {
 		uintptr(unsafe.Pointer(&resizeMessage)),
 	)
 	if errno != 0 {
-		client.SyncMessageFunc([]byte("Unable to resize terminal"))
+		client.SyncMessageFunc([]byte("Unable to resize terminal"), true)
 		return errors.New("Unable to resize terminal")
 	}
 

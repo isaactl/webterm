@@ -9,7 +9,6 @@ import (
 	"github.com/docker/docker/client"
 	"github.com/isaactl/webterm/terminals"
 	"github.com/isaactl/webterm/terminals/interface"
-	"github.com/pkg/errors"
 	"io"
 	"log"
 	"strings"
@@ -22,35 +21,34 @@ type DockerClient struct {
 	image           string
 	containerID     string
 	configs         terminals.TermConfigs
-	SyncMessageFunc func([]byte)
+	SyncMessageFunc terminals.SyncFunc
 	cmdBuff         bytes.Buffer
 }
 
-func NewDockerClient(configs terminals.TermConfigs, messageFunc func([]byte)) (_interface.Terminal, error) {
+func NewDockerClient(configs terminals.TermConfigs) (_interface.Terminal, error) {
 	repo := configs.Repo
 	// set default repository
 	if repo == "" {
 		repo = "docker.io"
 	}
 
-	if messageFunc == nil {
-		return nil, errors.New("SyncMessageFunc can't be nil")
-	}
-
 	return &DockerClient{
-		image:           configs.Image,
-		repo:            repo,
-		SyncMessageFunc: messageFunc,
-		cmdBuff:         bytes.Buffer{},
+		image:   configs.Image,
+		repo:    repo,
+		cmdBuff: bytes.Buffer{},
 	}, nil
 }
 
-func (dc *DockerClient) Connect() error {
-	dc.SyncMessageFunc([]byte("Prepare environment..."))
+func (dc *DockerClient) SetSync(syncFunc terminals.SyncFunc) {
+	dc.SyncMessageFunc = syncFunc
+}
+
+func (dc *DockerClient) Connect(context.Context) error {
+	dc.SyncMessageFunc([]byte("Prepare environment...\r\n"), false)
 	// should negotiate version with docker daemon
 	cli, err := client.NewClientWithOpts(client.WithVersion("1.38"))
 	if err != nil {
-		dc.SyncMessageFunc([]byte(err.Error()))
+		dc.SyncMessageFunc([]byte(err.Error()), true)
 		return err
 	}
 	dc.cli = cli
@@ -66,14 +64,14 @@ func (dc *DockerClient) Disconnect() error {
 	return nil
 }
 
-func (dc *DockerClient) Run(cmd []byte) error {
+func (dc *DockerClient) Run(cmd []byte) (int, error) {
 	//fmt.Println(string(cmd))
-	dc.SyncMessageFunc(cmd)
+	dc.SyncMessageFunc(cmd, false)
 	if len(cmd) > 0 && cmd[0] != '\r' {
 		dc.cmdBuff.Write(cmd)
-		return nil
+		return 0, nil
 	} else {
-		dc.SyncMessageFunc([]byte("\n"))
+		dc.SyncMessageFunc([]byte("\n"), false)
 		defer dc.cmdBuff.Reset()
 	}
 
@@ -89,7 +87,7 @@ func (dc *DockerClient) Run(cmd []byte) error {
 		Cmd:          cmdArray,
 	})
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	/*	err = dc.cli.ContainerExecResize(ctx, exec.ID, types.ResizeOptions{
@@ -105,7 +103,7 @@ func (dc *DockerClient) Run(cmd []byte) error {
 		Tty:    true,
 	})
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	go func() {
@@ -120,16 +118,16 @@ func (dc *DockerClient) Run(cmd []byte) error {
 				log.Print(err)
 				return
 			}
-			dc.SyncMessageFunc(buf)
+			dc.SyncMessageFunc(buf, false)
 			if err != nil {
 				log.Print(err)
-				dc.SyncMessageFunc([]byte(err.Error()))
+				dc.SyncMessageFunc([]byte(err.Error()), true)
 				return
 			}
 		}
 	}()
 
-	return nil
+	return len(cmd), nil
 }
 
 func (dc *DockerClient) Read(msg []byte) (int, error) {
@@ -152,7 +150,7 @@ func (dc *DockerClient) prepareContainer() error {
 	// check whether image exist
 	images, err := dc.cli.ImageList(context.Background(), types.ImageListOptions{})
 	if err != nil {
-		dc.SyncMessageFunc([]byte(err.Error()))
+		dc.SyncMessageFunc([]byte(err.Error()), true)
 		return err
 	}
 
@@ -174,10 +172,10 @@ func (dc *DockerClient) prepareContainer() error {
 		var buff bytes.Buffer
 		_, err = io.Copy(&buff, reader)
 		if err != nil {
-			dc.SyncMessageFunc([]byte(err.Error()))
+			dc.SyncMessageFunc([]byte(err.Error()), true)
 			return err
 		}
-		dc.SyncMessageFunc(buff.Bytes())
+		dc.SyncMessageFunc(buff.Bytes(), false)
 	}
 
 	resp, err := dc.cli.ContainerCreate(ctx, &container.Config{

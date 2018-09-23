@@ -2,6 +2,7 @@ package terminals
 
 type TermConfigs struct {
 	RemoteAdd string
+	Port      string
 	UserName  string
 	Password  string
 	DockerConfig
@@ -19,3 +20,5 @@ type WindowSize struct {
 	X    uint16
 	Y    uint16
 }
+
+type SyncFunc func([]byte, bool)

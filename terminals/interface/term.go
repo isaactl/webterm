@@ -1,11 +1,15 @@
 package _interface
 
-import "github.com/isaactl/webterm/terminals"
+import (
+	"context"
+	"github.com/isaactl/webterm/terminals"
+)
 
 type Terminal interface {
-	Connect() error
+	Connect(ctx context.Context) error
 	Disconnect() error
 	Read([]byte) (int, error)
-	Run(cmd []byte) error
+	Run(cmd []byte) (int, error)
 	Resize(terminals.WindowSize) error
+	SetSync(syncFunc terminals.SyncFunc)
 }

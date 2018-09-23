@@ -1,5 +1,5 @@
 hash: f1ba5817696930f224d2c56e1133ea897fd6b7f4423be01c9feb636fb7a382c3
-updated: 2018-09-16T17:09:44.055732+08:00
+updated: 2018-09-22T12:43:30.901502+08:00
 imports:
 - name: github.com/docker/distribution
   version: b089e91688254eb5aef187f188c8ee0ebe4e4675
@@ -36,13 +36,15 @@ imports:
 - name: github.com/docker/go-units
   version: 47565b4f722fb6ceae66b95f853feed578a4a51c
 - name: github.com/gogo/protobuf
-  version: e14cafb6a2c249986e51c4b65c3206bf18578715
+  version: 100ba4e885062801d56799d78530b73b178a78f3
   subpackages:
   - proto
 - name: github.com/gorilla/mux
   version: 9e1f5955c0d22b55d9e20d6faa28589f83b2faca
 - name: github.com/gorilla/websocket
   version: 66b9c49e59c6c48f0ffce28c2d8b8a5678502c6d
+- name: github.com/joho/godotenv
+  version: 23d116af351c84513e1946b527c88823e476be13
 - name: github.com/konsorten/go-windows-terminal-sequences
   version: b729f2633dfe35f4d1d8a32385f6685610ce1cb5
 - name: github.com/kr/pty
@@ -60,6 +62,8 @@ imports:
   version: c059e472caf75dbe73903f6521a20abac245b17f
 - name: github.com/sirupsen/logrus
   version: d23a0f20d429b5da960216daca3b37e075cbdcd1
+- name: github.com/urfave/cli
+  version: 934abfb2f102315b5794e15ebc7949e4ca253920
 - name: golang.org/x/crypto
   version: 0e37d006457bf46f9e6692014ba72ef82c33022c
   subpackages:
