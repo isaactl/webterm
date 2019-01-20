@@ -9,8 +9,7 @@ pipeline {
   stages {
     stage('build') {
       steps {
-        sh 'cd /go/src/github.com/isaactl/webterm && ls -al  && env'
-        sh 'go version && pwd && go build'
+        sh 'go version && cd /go/src/github.com/isaactl/webterm  && pwd &&  go build'
       }
     }
   }
