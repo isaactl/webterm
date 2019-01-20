@@ -11,7 +11,7 @@ pipeline {
       }
       steps {
         sh 'go version && cd /go/src/github.com/isaactl/webterm  && pwd &&  go build -o ./bin/webterm && ls -al '
-        stash(name: 'store exec file', includes: './bin/webterm', useDefaultExcludes: true)
+        stash(name: 'store exec file', includes: 'bin/webterm', useDefaultExcludes: true)
       }
     }
     stage('Build image') {
