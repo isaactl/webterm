@@ -17,8 +17,8 @@ pipeline {
     stage('Build image') {
       agent any
       steps {
-        sh 'pwd && ls -al && docker build -t webterm .'
         unstash 'store exec file'
+        sh 'pwd && ls -al && docker build -t webterm .'
       }
     }
   }
