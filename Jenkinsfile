@@ -9,7 +9,7 @@ pipeline {
   stages {
     stage('build') {
       steps {
-        sh 'ls -alh'
+        sh 'ls -alh && env'
         sh 'go build'
       }
     }
