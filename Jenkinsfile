@@ -7,9 +7,14 @@ pipeline {
 
   }
   stages {
-    stage('build') {
+    stage('build exec') {
       steps {
         sh 'go version && cd /go/src/github.com/isaactl/webterm  && pwd &&  go build'
+      }
+    }
+    stage('Build image') {
+      steps {
+        sh 'docker build -t webterm .'
       }
     }
   }
