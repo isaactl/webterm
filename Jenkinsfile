@@ -1,5 +1,5 @@
 pipeline {
-  agent any
+  agent none
   stages {
     stage('build exec') {
       agent {
@@ -11,12 +11,14 @@ pipeline {
       }
       steps {
         sh 'go version && cd /go/src/github.com/isaactl/webterm  && pwd &&  go build -o ./bin/webterm && ls -al '
+        stash(name: 'store exec file', includes: './bin/webterm', useDefaultExcludes: true)
       }
     }
     stage('Build image') {
       agent any
       steps {
         sh 'pwd && ls -al && docker build -t webterm .'
+        unstash 'store exec file'
       }
     }
   }
