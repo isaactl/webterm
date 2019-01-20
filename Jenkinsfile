@@ -10,12 +10,13 @@ pipeline {
 
       }
       steps {
-        sh 'go version && cd /go/src/github.com/isaactl/webterm  && pwd &&  go build -o ./bin/webterm '
+        sh 'go version && cd /go/src/github.com/isaactl/webterm  && pwd &&  go build -o ./bin/webterm && ls -al '
       }
     }
     stage('Build image') {
+      agent any
       steps {
-        sh 'ls -al && docker build -t webterm .'
+        sh 'pwd && ls -al && docker build -t webterm .'
       }
     }
   }
