@@ -15,7 +15,7 @@ pipeline {
     }
     stage('Build image') {
       steps {
-        sh 'docker build -t webterm .'
+        sh 'ls -al && docker build -t webterm .'
       }
     }
   }
